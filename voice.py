@@ -4,14 +4,16 @@ import requests
 
 engine = pyttsx3.init()
 
+# 🔊 SPEAK FUNCTION
 def speak(text):
     engine.say(text)
     engine.runAndWait()
 
+# 🎤 LISTEN FUNCTION
 def listen():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Speak...")
+        print("🎤 Speak...")
         audio = r.listen(source)
 
     try:
@@ -19,27 +21,36 @@ def listen():
     except:
         return ""
 
+# 🔁 MAIN LOOP
 while True:
     query = listen()
 
     if not query:
         continue
 
-    print("You:", query)
+    print("\n🧑 You:", query)
 
-    res = requests.post(
-        "http://127.0.0.1:5000/chat",
-        json={"query": query}
-    )
+    try:
+        res = requests.post(
+            "http://127.0.0.1:5000/chat",
+            json={"query": query}
+        )
 
-    data = res.json()
+        data = res.json()
 
-    if "answer" in data:
-        answer = data["answer"]
-    elif "balance" in data:
-        answer = f"Your balance is {data['balance']} rupees"
-    else:
-        answer = str(data)
+        # ✅ Handle different responses
+        if "answer" in data:
+            answer = data["answer"]
+        elif "balance" in data:
+            answer = f"Your balance is {data['balance']} rupees"
+        else:
+            answer = str(data)
 
-    print("Bot:", answer)
+    except Exception as e:
+        answer = "Server not responding. Please check Flask app."
+
+    print("🤖 Bot:", answer)
+    print("----------------------------------")
+
+    # 🔊 Voice output
     speak(answer)
