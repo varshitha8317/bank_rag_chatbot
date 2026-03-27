@@ -75,6 +75,9 @@ def withdraw_money(name, amount):
 def get_transactions(name):
     user = User.query.filter_by(name=name).first()
 
+    if not user:
+        return {"msg": "User not found"}   # ✅ fix
+
     txns = Transaction.query.filter_by(user_id=user.id).all()
 
     result = []

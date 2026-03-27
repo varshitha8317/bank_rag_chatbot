@@ -20,6 +20,6 @@ def get_answer(query):
     docs = retriever.invoke(query)
 
     if not docs:
-        return "I don't know"
+        return None   # 👈 important
 
     return docs[0].page_content
